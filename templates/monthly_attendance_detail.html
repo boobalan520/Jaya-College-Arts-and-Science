@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Monthly Attendance - {{ month_name }}</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 30px;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #f0f0f0;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .month-title {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+
+        .table-wrapper {
+            overflow-x: auto;
+            margin-top: 20px;
+            border-radius: 12px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            min-width: 800px;
+        }
+
+        th {
+            background: #667eea;
+            color: white;
+            padding: 12px 8px;
+            text-align: center;
+            font-weight: 600;
+            font-size: 0.8em;
+            border: 1px solid #5a67d8;
+        }
+
+        td {
+            padding: 8px;
+            text-align: center;
+            border-bottom: 1px solid #f0f0f0;
+            font-size: 0.75em;
+        }
+
+        .student-name {
+            text-align: left;
+            font-weight: 500;
+            position: sticky;
+            left: 0;
+            background: white;
+            z-index: 1;
+            border-right: 2px solid #e0e0e0;
+        }
+
+        .reg-no-cell {
+            position: sticky;
+            left: 180px;
+            background: white;
+            z-index: 1;
+            border-right: 2px solid #e0e0e0;
+        }
+
+        .percentage-cell {
+            position: sticky;
+            left: 280px;
+            background: white;
+            z-index: 1;
+            border-right: 2px solid #e0e0e0;
+            font-weight: bold;
+            text-align: center;
+        }
+
+        .present-cell {
+            background: #d4edda;
+            color: #155724;
+            font-weight: bold;
+        }
+
+        .absent-cell {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .partial-cell {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .date-column {
+            min-width: 55px;
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+            padding: 8px 16px;
+            text-decoration: none;
+            border-radius: 8px;
+            display: inline-block;
+            transition: all 0.3s;
+        }
+
+        .btn-secondary:hover {
+            background: #5a6268;
+            transform: translateY(-2px);
+        }
+
+        .stats-summary {
+            display: flex;
+            gap: 20px;
+            margin-top: 20px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .stat-badge {
+            padding: 8px 15px;
+            border-radius: 20px;
+            background: white;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            font-size: 0.85em;
+        }
+
+        .legend {
+            margin-top: 20px;
+            padding: 15px;
+            background: #e8f4f8;
+            border-radius: 10px;
+            text-align: center;
+            font-size: 0.8em;
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .legend-item {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .legend-box {
+            width: 24px;
+            height: 24px;
+            border-radius: 4px;
+        }
+
+        .legend-box.present {
+            background: #d4edda;
+            border: 1px solid #28a745;
+        }
+
+        .legend-box.absent {
+            background: #f8d7da;
+            border: 1px solid #dc3545;
+        }
+
+        .legend-box.partial {
+            background: #fff3cd;
+            border: 1px solid #ffc107;
+        }
+
+        .percentage-high {
+            color: #28a745;
+            font-weight: bold;
+        }
+
+        .percentage-medium {
+            color: #ffc107;
+            font-weight: bold;
+        }
+
+        .percentage-low {
+            color: #dc3545;
+            font-weight: bold;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 15px;
+            }
+            
+            th, td {
+                padding: 5px;
+                font-size: 0.65em;
+            }
+            
+            .student-name {
+                min-width: 100px;
+            }
+            
+            .stats-summary {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .reg-no-cell {
+                left: 120px;
+            }
+
+            .percentage-cell {
+                left: 200px;
+            }
+
+            .date-column {
+                min-width: 45px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Monthly Attendance</h1>
+            <a href="{{ url_for('monthly_attendance', year=year, section=section) }}" class="btn btn-secondary">Back to Months</a>
+        </div>
+
+        <div class="month-title">
+            <h2>{{ month_name }}</h2>
+            <p>{{ year }} - Section {{ section }} | Total Students: <strong>{{ students|length }}</strong></p>
+        </div>
+
+        <div class="stats-summary">
+            <div class="stat-badge">
+                Total Days: <strong>{{ dates|length }}</strong>
+            </div>
+            <div class="stat-badge">
+                <span style="color: #28a745;">■</span> 6/6 (Full Present)
+            </div>
+            <div class="stat-badge">
+                <span style="color: #ffc107;">■</span> 1-5/6 (Partial)
+            </div>
+            <div class="stat-badge">
+                <span style="color: #dc3545;">■</span> 0/6 (Absent)
+            </div>
+        </div>
+
+        <div class="table-wrapper">
+            <table>
+                <thead>
+                    <tr>
+                        <th style="min-width: 150px;">Student Name</th>
+                        <th style="min-width: 90px;">Register No</th>
+                        <th style="min-width: 100px;">Attendance %</th>
+                        {% for date in dates %}
+                        <th class="date-column">{{ date.strftime('%d') }}<br><span style="font-size: 0.6em;">{{ date.strftime('%b') }}</span></th>
+                        {% endfor %}
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for student in student_attendance %}
+                    <tr>
+                        <td class="student-name">{{ student.name }}</td>
+                        <td class="reg-no-cell">{{ student.reg_no }}</td>
+                        <td class="percentage-cell">
+                            {% set total_days = dates|length %}
+                            {% set total_possible = total_days * 6 %}
+                            {% set percentage = (student.total_present / total_possible * 100) if total_possible > 0 else 0 %}
+                            {% if percentage >= 75 %}
+                            <span class="percentage-high">{{ "%.1f"|format(percentage) }}%</span>
+                            {% elif percentage >= 40 %}
+                            <span class="percentage-medium">{{ "%.1f"|format(percentage) }}%</span>
+                            {% else %}
+                            <span class="percentage-low">{{ "%.1f"|format(percentage) }}%</span>
+                            {% endif %}
+                            <br>
+                            <small>({{ student.total_present }}/{{ total_possible }})</small>
+                        </td>
+                        {% for date in dates %}
+                        {% set present_count = student.daily.get(date, 0) %}
+                        <td class="{% if present_count == 6 %}present-cell{% elif present_count == 0 %}absent-cell{% else %}partial-cell{% endif %}">
+                            {{ present_count }}/6
+                        </td>
+                        {% endfor %}
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        
+        <div class="legend">
+            <div class="legend-item">
+                <div class="legend-box present"></div>
+                <span>Full Present (6/6 periods)</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-box partial"></div>
+                <span>Partial Present (1-5 periods)</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-box absent"></div>
+                <span>Absent (0 periods)</span>
+            </div>
+            <div class="legend-item">
+                <span style="color: #28a745;">●</span> ≥75%
+            </div>
+            <div class="legend-item">
+                <span style="color: #ffc107;">●</span> 40-74%
+            </div>
+            <div class="legend-item">
+                <span style="color: #dc3545;">●</span> &lt;40%
+            </div>
+        </div>
+    </div>
+</body>
+</html>

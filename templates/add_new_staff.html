@@ -1,0 +1,582 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Add New Staff</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 50%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 30px;
+            box-shadow: 0 25px 50px rgba(0,0,0,0.3);
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 30px;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #f0f0f0;
+        }
+
+        .header h1 {
+            color: #1e3c72;
+            font-size: 1.5em;
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 8px;
+            text-decoration: none;
+            transition: all 0.3s;
+            font-size: 0.85em;
+        }
+
+        .btn-secondary:hover {
+            background: #5a6268;
+            transform: translateY(-2px);
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #555;
+            font-weight: 500;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 14px;
+        }
+
+        .btn {
+            padding: 12px 20px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .btn-primary {
+            background: #28a745;
+            color: white;
+            width: 100%;
+        }
+
+        .btn-primary:hover {
+            background: #218838;
+            transform: translateY(-2px);
+        }
+
+        .btn-add-subject {
+            background: #17a2b8;
+            color: white;
+            padding: 8px 15px;
+            margin-top: 10px;
+        }
+
+        .btn-add-subject:hover {
+            background: #138496;
+        }
+
+        .btn-remove-subject {
+            background: #dc3545;
+            color: white;
+            border: none;
+            padding: 4px 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.7em;
+        }
+
+        .subjects-list {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 10px;
+            min-height: 60px;
+        }
+
+        .subject-tag {
+            display: inline-block;
+            background: #17a2b8;
+            color: white;
+            padding: 5px 12px;
+            border-radius: 20px;
+            margin: 5px;
+            font-size: 0.85em;
+        }
+
+        .info-note {
+            background: #e8f4f8;
+            padding: 12px;
+            border-radius: 8px;
+            margin-top: 20px;
+            font-size: 0.85em;
+            color: #0066cc;
+        }
+
+        .error-message {
+            background: #f8d7da;
+            color: #721c24;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .success-message {
+            background: #d4edda;
+            color: #155724;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .subject-input-group {
+            display: flex;
+            gap: 10px;
+        }
+
+        .subject-input-group input {
+            flex: 1;
+        }
+
+        .staff-list {
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 2px solid #e0e0e0;
+        }
+
+        .staff-list h3 {
+            margin-bottom: 15px;
+            color: #333;
+        }
+
+        .staff-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+
+        .staff-table th {
+            background: #667eea;
+            color: white;
+            padding: 10px;
+            text-align: left;
+            font-size: 0.85em;
+        }
+
+        .staff-table td {
+            padding: 10px;
+            border-bottom: 1px solid #f0f0f0;
+            font-size: 0.85em;
+        }
+
+        .staff-table tr:hover {
+            background: #f8f9fa;
+        }
+
+        .password-status {
+            display: inline-block;
+            background: #28a745;
+            color: white;
+            padding: 3px 10px;
+            border-radius: 15px;
+            font-size: 0.7em;
+        }
+
+        .subject-badge {
+            display: inline-block;
+            background: #ffc107;
+            color: #333;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 0.7em;
+            margin: 2px;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 5px;
+            flex-wrap: wrap;
+        }
+
+        .btn-warning {
+            background: #ffc107;
+            color: #333;
+            padding: 4px 10px;
+            font-size: 0.75em;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .btn-warning:hover {
+            background: #e0a800;
+        }
+
+        .btn-danger {
+            background: #dc3545;
+            color: white;
+            padding: 4px 10px;
+            font-size: 0.75em;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-danger:hover {
+            background: #c82333;
+        }
+
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.6);
+            z-index: 1000;
+            backdrop-filter: blur(5px);
+        }
+
+        .modal-content {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            padding: 25px;
+            border-radius: 20px;
+            width: 380px;
+            max-width: 90%;
+        }
+
+        .modal-content h3 {
+            margin-bottom: 15px;
+            color: #333;
+        }
+
+        .modal-content input {
+            width: 100%;
+            padding: 10px;
+            margin: 8px 0;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+        }
+
+        .modal-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .modal-buttons button {
+            flex: 1;
+            padding: 10px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        .modal-buttons .save {
+            background: #28a745;
+            color: white;
+        }
+
+        .modal-buttons .cancel {
+            background: #6c757d;
+            color: white;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px;
+            }
+            .header {
+                flex-direction: column;
+                gap: 15px;
+                text-align: center;
+            }
+            .subject-input-group {
+                flex-direction: column;
+            }
+            .staff-table th, .staff-table td {
+                padding: 6px;
+                font-size: 0.75em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>👤 Add New Staff</h1>
+            <a href="{{ url_for('head_dashboard') }}" class="btn-secondary">Back to Head Dashboard</a>
+        </div>
+
+        {% if error %}
+        <div class="error-message">{{ error }}</div>
+        {% endif %}
+
+        {% if success %}
+        <div class="success-message">{{ success }}</div>
+        {% endif %}
+
+        <form method="POST" action="{{ url_for('add_global_staff') }}" id="staffForm">
+            <div class="form-group">
+                <label>Staff Name *</label>
+                <input type="text" name="staff_name" placeholder="e.g., John Doe" required>
+            </div>
+            <div class="form-group">
+                <label>Password *</label>
+                <input type="password" name="staff_password" placeholder="Min 6 characters" required>
+            </div>
+            
+            <!-- Subjects Section -->
+            <div class="form-group">
+                <label>Subjects (Can teach multiple subjects) *</label>
+                <div class="subject-input-group">
+                    <input type="text" id="subjectInput" placeholder="e.g., Python, Java, C++">
+                    <button type="button" class="btn-add-subject" onclick="addSubject()">+ Add Subject</button>
+                </div>
+                <div id="subjectsList" class="subjects-list">
+                    <small style="color: #666;">Added subjects will appear here</small>
+                </div>
+                <input type="hidden" name="subjects" id="subjectsHidden" required>
+            </div>
+            
+            <button type="submit" class="btn btn-primary">Add Staff</button>
+        </form>
+
+        <div class="info-note">
+            <strong>💡 Note:</strong> Staff can teach multiple subjects. Add all subjects they are qualified to teach. Staff will have access to ALL departments.
+        </div>
+
+        <!-- Staff List Section -->
+        <div class="staff-list">
+            <h3>📋 Existing Staff List</h3>
+            {% if all_staff %}
+            <table class="staff-table">
+                <thead>
+                    <tr>
+                        <th>Staff Name</th>
+                        <th>Subjects</th>
+                        <th>Status</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for staff_member in all_staff %}
+                    <tr id="staff-row-{{ staff_member.id }}">
+                        <td>{{ staff_member.name }}</div>
+                        <td>
+                            {% set subjects = staff_member.get_subjects_list() %}
+                            {% for sub in subjects %}
+                            <span class="subject-badge">{{ sub }}</span>
+                            {% endfor %}
+                            {% if not subjects %}
+                            <span style="color: #999;">No subjects</span>
+                            {% endif %}
+                        </div>
+                        <td><span class="password-status">✓ Password Set</span></div>
+                        <td>
+                            <div class="action-buttons">
+                                <button class="btn-warning" onclick="showChangePasswordModal('staff', '{{ staff_member.id }}', '{{ staff_member.name }}')">Change Password</button>
+                                <a href="{{ url_for('delete_global_staff', staff_id=staff_member.id) }}" 
+                                   class="btn-danger" 
+                                   onclick="return confirm('Delete staff {{ staff_member.name }}? This will remove their access to all departments.')">
+                                    Delete
+                                </a>
+                            </div>
+                        </div>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            {% else %}
+            <p style="text-align: center; color: #999; padding: 20px;">No staff added yet. Add your first staff member above.</p>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Change Password Modal -->
+    <div id="passwordModal" class="modal">
+        <div class="modal-content">
+            <h3>Change Password</h3>
+            <p id="modalEntityName" style="margin-bottom: 15px; color: #666;"></p>
+            <input type="password" id="newPassword" placeholder="New Password (min 6 characters)">
+            <input type="password" id="confirmPassword" placeholder="Confirm New Password">
+            <input type="hidden" id="entityType">
+            <input type="hidden" id="entityId">
+            <div class="modal-buttons">
+                <button class="save" onclick="changePassword()">Save</button>
+                <button class="cancel" onclick="closeModal()">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let subjects = [];
+
+        function addSubject() {
+            const subjectInput = document.getElementById('subjectInput');
+            const subject = subjectInput.value.trim();
+            
+            if (!subject) {
+                alert('Please enter a subject');
+                return;
+            }
+            
+            if (subjects.includes(subject)) {
+                alert('Subject already added!');
+                return;
+            }
+            
+            subjects.push(subject);
+            updateSubjectsDisplay();
+            subjectInput.value = '';
+            subjectInput.focus();
+        }
+
+        function removeSubject(index) {
+            subjects.splice(index, 1);
+            updateSubjectsDisplay();
+        }
+
+        function updateSubjectsDisplay() {
+            const container = document.getElementById('subjectsList');
+            const hiddenInput = document.getElementById('subjectsHidden');
+            
+            if (subjects.length === 0) {
+                container.innerHTML = '<small style="color: #666;">Added subjects will appear here</small>';
+                hiddenInput.value = '';
+                return;
+            }
+            
+            let html = '';
+            subjects.forEach((subject, index) => {
+                html += `<span class="subject-tag">
+                            ${subject} 
+                            <button type="button" class="btn-remove-subject" onclick="removeSubject(${index})" style="margin-left: 8px;">✗</button>
+                         </span>`;
+            });
+            container.innerHTML = html;
+            hiddenInput.value = subjects.join(',');
+        }
+
+        // Form validation before submit
+        document.getElementById('staffForm').addEventListener('submit', function(e) {
+            if (subjects.length === 0) {
+                e.preventDefault();
+                alert('Please add at least one subject for the staff member');
+            }
+        });
+
+        // Password change functions
+        let currentEntityType = null;
+        let currentEntityId = null;
+
+        function showChangePasswordModal(type, id, name) {
+            currentEntityType = type;
+            currentEntityId = id;
+            document.getElementById('modalEntityName').innerHTML = '<strong>' + name + '</strong>';
+            document.getElementById('newPassword').value = '';
+            document.getElementById('confirmPassword').value = '';
+            document.getElementById('passwordModal').style.display = 'block';
+        }
+
+        function closeModal() {
+            document.getElementById('passwordModal').style.display = 'none';
+            currentEntityType = null;
+            currentEntityId = null;
+        }
+
+        function changePassword() {
+            const newPassword = document.getElementById('newPassword').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+
+            if (!newPassword) {
+                alert('Please enter a new password');
+                return;
+            }
+
+            if (newPassword !== confirmPassword) {
+                alert('Passwords do not match!');
+                return;
+            }
+
+            if (newPassword.length < 6) {
+                alert('Password must be at least 6 characters');
+                return;
+            }
+
+            fetch('/change_staff_password', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    type: 'staff',
+                    id: currentEntityId,
+                    new_password: newPassword
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert('Password changed successfully!');
+                    closeModal();
+                } else {
+                    alert('Error: ' + data.error);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Failed to change password');
+            });
+        }
+
+        window.onclick = function(event) {
+            const modal = document.getElementById('passwordModal');
+            if (event.target == modal) {
+                closeModal();
+            }
+        }
+    </script>
+</body>
+</html>

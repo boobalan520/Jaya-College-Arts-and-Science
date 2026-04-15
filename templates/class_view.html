@@ -1,0 +1,658 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>{{ year }} - Section {{ section }}</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 30px;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #f0f0f0;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .header h1 {
+            color: #333;
+            font-size: 2em;
+        }
+
+        .class-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+
+        .stats-container {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .stat-card h3 {
+            font-size: 2em;
+            color: #667eea;
+            margin-bottom: 5px;
+        }
+
+        .stat-card p {
+            color: #666;
+        }
+
+        .info-note {
+            background: #e8f4f8;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            text-align: center;
+            font-size: 0.85em;
+            color: #0066cc;
+        }
+
+        .table-wrapper {
+            overflow-x: auto;
+            margin-top: 20px;
+            position: relative;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            min-width: 900px;
+        }
+
+        th {
+            background: #667eea;
+            color: white;
+            padding: 12px;
+            text-align: center;
+            font-weight: 600;
+            font-size: 0.85em;
+        }
+
+        td {
+            padding: 10px;
+            text-align: center;
+            border-bottom: 1px solid #f0f0f0;
+            font-size: 0.8em;
+        }
+
+        .student-name {
+            text-align: left;
+            font-weight: 500;
+        }
+
+        .student-info-cell {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .student-header {
+            font-weight: 600;
+            font-size: 1em;
+        }
+
+        .ec-activities {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin: 5px 0;
+        }
+
+        .ec-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: #ffc107;
+            color: #333;
+            padding: 3px 8px 3px 12px;
+            border-radius: 20px;
+            font-size: 0.7em;
+            font-weight: 500;
+        }
+
+        .delete-ec {
+            background: none;
+            border: none;
+            color: #dc3545;
+            cursor: pointer;
+            font-size: 0.9em;
+            font-weight: bold;
+            padding: 0 3px;
+            border-radius: 50%;
+            transition: all 0.2s;
+        }
+
+        .delete-ec:hover {
+            color: #ff0000;
+            transform: scale(1.1);
+        }
+
+        .ec-btn {
+            display: inline-block;
+            background: #17a2b8;
+            color: white;
+            padding: 3px 10px;
+            border-radius: 15px;
+            font-size: 0.65em;
+            text-decoration: none;
+            transition: all 0.2s;
+            width: fit-content;
+        }
+
+        .ec-btn:hover {
+            background: #138496;
+            transform: translateY(-1px);
+        }
+
+        tr:hover {
+            background: #f8f9fa;
+        }
+
+        .present {
+            color: #28a745;
+            font-weight: bold;
+        }
+
+        .absent {
+            color: #dc3545;
+        }
+
+        .high {
+            color: #28a745;
+            font-weight: bold;
+        }
+
+        .medium {
+            color: #ffc107;
+            font-weight: bold;
+        }
+
+        .low {
+            color: #dc3545;
+            font-weight: bold;
+        }
+
+        .percentage-cell {
+            font-weight: bold;
+            text-align: center;
+        }
+
+        /* IMPROVED DROPDOWN - Fixed positioning */
+        .dropdown {
+            position: relative;
+            display: inline-block;
+        }
+
+        .dropbtn {
+            background: #667eea;
+            color: white;
+            padding: 6px 12px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.75em;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+
+        .dropbtn:hover {
+            background: #5a67d8;
+        }
+
+        .dropdown-content {
+            display: none;
+            position: fixed;
+            background-color: white;
+            min-width: 160px;
+            box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+            z-index: 1000;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .dropdown-content a {
+            color: #333;
+            padding: 10px 15px;
+            text-decoration: none;
+            display: block;
+            font-size: 0.8em;
+            text-align: left;
+            transition: background 0.2s;
+        }
+
+        .dropdown-content a:hover {
+            background-color: #f0f0f0;
+        }
+
+        .print-btn, .back-btn {
+            display: inline-block;
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-size: 0.85em;
+            text-decoration: none;
+        }
+
+        .print-btn {
+            background: #28a745;
+            color: white;
+            margin-right: 10px;
+        }
+
+        .back-btn {
+            background: #6c757d;
+            color: white;
+        }
+
+        .popup-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 999;
+        }
+
+        .popup-overlay.active {
+            display: block;
+        }
+
+        .popup-container {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.3);
+            z-index: 1001;
+            width: 350px;
+            text-align: center;
+        }
+
+        .popup-container.active {
+            display: block;
+        }
+
+        .popup-container h3 {
+            margin-bottom: 15px;
+            color: #333;
+        }
+
+        .popup-container p {
+            margin-bottom: 20px;
+            color: #666;
+        }
+
+        .popup-buttons {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+        }
+
+        .popup-btn {
+            padding: 8px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        .popup-btn-confirm {
+            background: #dc3545;
+            color: white;
+        }
+
+        .popup-btn-cancel {
+            background: #6c757d;
+            color: white;
+        }
+
+        /* Action button styles */
+        .action-buttons {
+            display: flex;
+            gap: 8px;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .action-icon {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 1.1em;
+            padding: 4px 8px;
+            border-radius: 4px;
+            transition: all 0.2s;
+        }
+
+        .action-icon:hover {
+            background: #f0f0f0;
+            transform: scale(1.05);
+        }
+
+        @media (max-width: 768px) {
+            .stats-container {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            .header {
+                flex-direction: column;
+                text-align: center;
+            }
+            th, td {
+                padding: 6px;
+                font-size: 0.7em;
+            }
+            .ec-badge {
+                font-size: 0.6em;
+                padding: 2px 6px;
+            }
+            .ec-btn {
+                font-size: 0.55em;
+                padding: 2px 6px;
+            }
+            .dropbtn {
+                padding: 4px 8px;
+                font-size: 0.65em;
+            }
+            .action-buttons {
+                flex-direction: column;
+                gap: 4px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>{{ year }} - Section {{ section }}</h1>
+            <div>
+                <a href="{{ url_for('print_attendance', year=year, section=section) }}" class="print-btn">🖨️ Print</a>
+                <a href="{{ url_for('admin_dashboard') }}" class="back-btn">← Back</a>
+            </div>
+        </div>
+
+        <div class="class-header">
+            <h2>Class Details</h2>
+            <p>Year: {{ year }} | Section: {{ section }} | Total Students: {{ students|length }}</p>
+        </div>
+
+        <div class="stats-container">
+            <div class="stat-card">
+                <h3>{{ students|length }}</h3>
+                <p>Total Students</p>
+            </div>
+            <div class="stat-card">
+                <h3>{{ students|selectattr('percentage', 'defined')|selectattr('percentage', '>=', 75)|list|length }}</h3>
+                <p>Above 75%</p>
+            </div>
+            <div class="stat-card">
+                <h3>{{ students|selectattr('percentage', 'defined')|selectattr('percentage', '<', 40)|list|length }}</h3>
+                <p>Below 40%</p>
+            </div>
+            <div class="stat-card">
+                <h3>{{ "%.1f"|format(students|map(attribute='percentage')|sum / students|length if students|length > 0 else 0) }}%</h3>
+                <p>Class Average</p>
+            </div>
+        </div>
+
+        <div class="info-note">
+            💡 Percentage = (Present Periods / Total Periods) x 100 | Click ✗ on badges to delete EC activities
+        </div>
+
+        <div class="table-wrapper">
+            <table>
+                <thead>
+                    <tr>
+                        <th>S.No</th>
+                        <th>Register No</th>
+                        <th>Student Name & Activities</th>
+                        <th>Batch</th>
+                        <th>Total Days</th>
+                        <th>Total Periods</th>
+                        <th>Present</th>
+                        <th>Absent</th>
+                        <th>Percentage</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for student in students %}
+                    <tr id="student-row-{{ student.id }}">
+                        <td>{{ loop.index }}</div>
+                        <td>{{ student.reg_no }}</div>
+                        <td class="student-name">
+                            <div class="student-info-cell">
+                                <div class="student-header">{{ student.name }}</div>
+                                {% if student.ec_activities|length > 0 %}
+                                <div class="ec-activities">
+                                    {% for activity in student.ec_activities %}
+                                    <span class="ec-badge">
+                                        {% if activity.notes %}
+                                            {{ activity.notes }}
+                                        {% else %}
+                                            {{ activity.name }}
+                                        {% endif %}
+                                        <button type="button" class="delete-ec" data-activity-id="{{ activity.id }}" data-student-id="{{ student.id }}" data-activity-name="{{ activity.notes if activity.notes else activity.name }}">✗</button>
+                                    </span>
+                                    {% endfor %}
+                                </div>
+                                {% endif %}
+                                <a href="{{ url_for('ec_activity', student_id=student.id, year=year, section=section) }}" class="ec-btn">➕ Add EC Activity</a>
+                            </div>
+                        </div>
+                        <td>{{ student.batch }}</div>
+                        <td>{{ student.total_days }}</div>
+                        <td>{{ student.total_periods }}</div>
+                        <td class="present">{{ student.present_periods }}</div>
+                        <td class="absent">{{ student.absent_periods }}</div>
+                        <td class="percentage-cell {% if student.percentage >= 75 %}high{% elif student.percentage >= 40 %}medium{% else %}low{% endif %}">
+                            <strong>{{ student.percentage }}%</strong>
+                        </div>
+                        <td>
+                            {% if student.percentage >= 75 %}
+                            <span style="color: #28a745;">✅ Good</span>
+                            {% elif student.percentage >= 40 %}
+                            <span style="color: #ffc107;">⚠️ Average</span>
+                            {% else %}
+                            <span style="color: #dc3545;">❌ Low</span>
+                            {% endif %}
+                        </div>
+                        <td>
+                            <div class="action-buttons">
+                                <button class="action-icon" onclick="showActionMenu(this, '{{ student.id }}', '{{ student.name }}', '{{ year }}', '{{ section }}')" title="Actions">⚙️</button>
+                            </div>
+                        </div>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Floating Action Menu (replaces dropdown) -->
+    <div id="actionMenu" class="dropdown-content" style="display: none;">
+        <a href="#" id="actionDetails">📋 View Details</a>
+        <a href="#" id="actionAddDate">📅 Add Date Attendance</a>
+        <a href="#" id="actionAddPrevious">📜 Add Previous Attendance</a>
+        <a href="#" id="actionDeleteStudent">🗑️ Delete Student</a>
+    </div>
+
+    <!-- Delete EC Activity Confirmation Popup -->
+    <div id="popupOverlay" class="popup-overlay"></div>
+    <div id="deletePopup" class="popup-container">
+        <h3>Delete EC Activity</h3>
+        <p id="deleteMessage">Are you sure you want to delete this activity?</p>
+        <div class="popup-buttons">
+            <button class="popup-btn popup-btn-confirm" onclick="confirmDeleteEC()">Delete</button>
+            <button class="popup-btn popup-btn-cancel" onclick="closeDeletePopup()">Cancel</button>
+        </div>
+    </div>
+
+    <script>
+        let deleteActivityId = null;
+        let deleteStudentIdForEC = null;
+        let currentActionStudentId = null;
+        let currentActionYear = null;
+        let currentActionSection = null;
+
+        // Floating Action Menu
+        const actionMenu = document.getElementById('actionMenu');
+        
+        function showActionMenu(button, studentId, studentName, year, section) {
+            currentActionStudentId = studentId;
+            currentActionYear = year;
+            currentActionSection = section;
+            
+            // Get button position
+            const rect = button.getBoundingClientRect();
+            
+            // Position the menu near the button
+            actionMenu.style.display = 'block';
+            actionMenu.style.position = 'fixed';
+            actionMenu.style.top = (rect.bottom + 5) + 'px';
+            actionMenu.style.left = (rect.left - 100) + 'px';
+            
+            // Adjust if off screen
+            const menuRect = actionMenu.getBoundingClientRect();
+            if (menuRect.right > window.innerWidth) {
+                actionMenu.style.left = (window.innerWidth - menuRect.width - 10) + 'px';
+            }
+            if (menuRect.bottom > window.innerHeight) {
+                actionMenu.style.top = (rect.top - menuRect.height - 5) + 'px';
+            }
+            
+            // Set up action links
+            document.getElementById('actionDetails').href = `/student_attendance_details/${studentId}/${year}/${section}`;
+            document.getElementById('actionAddDate').href = `/add_new_date_attendance/${studentId}/${year}/${section}`;
+            document.getElementById('actionAddPrevious').href = `/add_previous_attendance/${studentId}`;
+            document.getElementById('actionDeleteStudent').onclick = function(e) {
+                e.preventDefault();
+                if (confirm(`Delete student ${studentName}? This cannot be undone!`)) {
+                    window.location.href = `/delete_student/${studentId}`;
+                }
+                actionMenu.style.display = 'none';
+            };
+        }
+        
+        // Close menu when clicking outside
+        document.addEventListener('click', function(event) {
+            if (!event.target.closest('.action-icon') && !event.target.closest('#actionMenu')) {
+                actionMenu.style.display = 'none';
+            }
+        });
+
+        // Handle EC Activity Delete
+        document.querySelectorAll('.delete-ec').forEach(function(button) {
+            button.addEventListener('click', function(e) {
+                e.stopPropagation();
+                deleteActivityId = this.getAttribute('data-activity-id');
+                deleteStudentIdForEC = this.getAttribute('data-student-id');
+                var activityName = this.getAttribute('data-activity-name');
+                document.getElementById('deleteMessage').innerHTML = 'Delete EC activity: <strong>"' + activityName + '"</strong> for this student?';
+                document.getElementById('deletePopup').classList.add('active');
+                document.getElementById('popupOverlay').classList.add('active');
+            });
+        });
+
+        function closeDeletePopup() {
+            deleteActivityId = null;
+            deleteStudentIdForEC = null;
+            document.getElementById('deletePopup').classList.remove('active');
+            document.getElementById('popupOverlay').classList.remove('active');
+        }
+
+        function confirmDeleteEC() {
+            if (deleteActivityId) {
+                fetch('/delete_student_ec', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        activity_id: deleteActivityId,
+                        student_id: deleteStudentIdForEC
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        location.reload();
+                    } else {
+                        alert('Error: ' + data.error);
+                        closeDeletePopup();
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Failed to delete activity');
+                    closeDeletePopup();
+                });
+            }
+        }
+
+        // Close popup when clicking on overlay
+        var overlay = document.getElementById('popupOverlay');
+        if (overlay) {
+            overlay.addEventListener('click', function() {
+                closeDeletePopup();
+            });
+        }
+
+        // Close popup with Escape key
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closeDeletePopup();
+                actionMenu.style.display = 'none';
+            }
+        });
+    </script>
+</body>
+</html>
